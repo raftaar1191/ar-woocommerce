@@ -8,3 +8,7 @@ npm-debug.log
 # Composer
 composer.lock
 /vendor/
+
+# IDE
+.idea
+.svn
