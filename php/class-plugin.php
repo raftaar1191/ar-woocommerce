@@ -38,7 +38,7 @@ class Plugin extends Plugin_Base {
 	function hooks() {
 		$this->add_filter( 'woocommerce_product_data_tabs', array( $this, 'woocommerce_product_data_tabs' ), 10, 1 );
 		$this->add_action( 'woocommerce_product_data_panels', array( $this, 'woocommerce_product_data_panels' ), 10, 1 );
-		$this->add_action( 'woocommerce_process_product_meta_simple', array( $this, 'woocommerce_process_product_meta_simple' ), 10, 1 );
+		$this->add_action( 'woocommerce_process_product_meta', array( $this, 'woocommerce_process_product_meta' ), 10, 1 );
 		$this->add_action( 'woocommerce_after_add_to_cart_form', array( $this, 'woocommerce_after_add_to_cart_form' ), 10 );
 	}
 
@@ -118,7 +118,7 @@ class Plugin extends Plugin_Base {
 	/**
 	 * Save AR product meta
 	 */
-	function woocommerce_process_product_meta_simple( $post_id ) {
+	function woocommerce_process_product_meta( $post_id ) {
 //		Save the AR link
 		if ( isset( $_POST['_ar_link'] ) ) {
 			$_ar_link = (string) $_POST['_ar_link'];
