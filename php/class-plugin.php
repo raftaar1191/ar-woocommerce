@@ -23,6 +23,11 @@ class Plugin extends Plugin_Base {
 	 */
 	public function init() {
 		$this->config = apply_filters( 'ar_woocommerce_plugin_config', $this->config, $this );
+		$upload_dir = wp_upload_dir();
+		define( 'AR_IMAGE_DIR', $upload_dir['basedir'] . '/qr-images/' );
+		define( 'AR_IMAGE_URL', WP_CONTENT_URL . '/uploads/qr-images/' );
+
+		include_once( $this->dir_path . '/php/lib/phpqrcode/qrlib.php' );
 
 		$this->hooks();
 	}
@@ -34,6 +39,7 @@ class Plugin extends Plugin_Base {
 		$this->add_filter( 'woocommerce_product_data_tabs', array( $this, 'woocommerce_product_data_tabs' ), 10, 1 );
 		$this->add_action( 'woocommerce_product_data_panels', array( $this, 'woocommerce_product_data_panels' ), 10, 1 );
 		$this->add_action( 'woocommerce_process_product_meta_simple', array( $this, 'woocommerce_process_product_meta_simple' ), 10, 1 );
+		$this->add_action( 'woocommerce_after_add_to_cart_form', array( $this, 'woocommerce_after_add_to_cart_form' ), 10 );
 	}
 
 	/**
@@ -48,6 +54,28 @@ class Plugin extends Plugin_Base {
 	}
 
 	/**
+	 * Show QR Image in frountend.
+	 */
+	function woocommerce_after_add_to_cart_form() {
+		global $product;
+		$post_id = $product->get_id();
+		$has_qr = get_post_meta( $post_id, 'ar_woocommerce_has_qr', true );
+		if ( $has_qr ) {
+			$image_name = $post_id . '.png';
+			$url = AR_IMAGE_URL . $image_name;
+			?>
+			<div class="ar_woocommerce_qr_code_main">
+				<div class="ar_woocommerce_qr_code_img">
+					<img src="<?php echo $url; ?>">
+				</div>
+
+				<a href="#" class="show_ar_woocommerce_qr_code_img" ><?php esc_html_e( 'Try Now', 'ar-woocommerce' ) ?></a>
+			</div>
+			<?php
+		}
+	}
+
+	/**
 	 * AR tab content Add in the product dashboard.
 	 */
 	function woocommerce_product_data_panels() {
@@ -56,6 +84,7 @@ class Plugin extends Plugin_Base {
 		<div id="ar_woocommerce_product_data" class="panel woocommerce_options_panel">
 			<?php
 			$post_id = (int) $_GET['post'];
+			$_ar_link = esc_url_raw( get_post_meta( $post_id, '_ar_link', true ) );
 
 			woocommerce_wp_text_input(
 				array(
@@ -65,12 +94,22 @@ class Plugin extends Plugin_Base {
 				)
 			);
 
-			/*
-			<p class="form-field _ar_button_field ">
-			<label for="_ar_button_field"><?php echo __( 'Generate OR', 'ar-woocommerce' ); ?></label>
-			<a href="#" class="_ar_button_field _ar_generate_or_button _ar_generate_or" id="_ar_button_field"><?php echo __( 'Click', 'ar-woocommerce' ); ?></a>
-			</p>
-			*/
+			if ( ! empty( $_ar_link ) ) {
+				?>
+				<p class="form-field _ar_button_field ">
+					<label for="_ar_button_field"><?php echo __( 'Generate OR', 'ar-woocommerce' ); ?></label>
+					<?php
+					$image_name = $post_id . '.png';
+					$url = AR_IMAGE_URL . $image_name;
+					\QRcode::png( esc_url( $_ar_link ), AR_IMAGE_DIR . $image_name, QR_ECLEVEL_L, 4 );
+					update_post_meta( $post_id, 'ar_woocommerce_has_qr', true );
+					?>
+					<img src="<?php echo $url; ?>">
+				</p>
+				<?php
+			} else {
+				update_post_meta( $post_id, 'ar_woocommerce_has_qr', false );
+			}
 			?>
 		</div>
 		<?php
