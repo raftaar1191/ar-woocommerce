@@ -86,16 +86,17 @@ class Plugin extends Plugin_Base {
 		$product_id = $product->get_id();
 		$has_qr = get_post_meta( $product_id, 'ar_woocommerce_has_qr', true );
 		if ( $has_qr ) {
+			$device = ( wp_is_mobile() ? 'mobile' : 'desktop' );
 			$image_name = $product_id . '.png';
 			$url = AR_IMAGE_URL . $image_name;
 			?>
-			<div class="ar_woocommerce_qr_code_main">
+			<div class="ar_woocommerce_qr_code_main hide">
 				<div class="ar_woocommerce_qr_code_img">
 					<img src="<?php echo $url; ?>">
 				</div>
-
-				<a href="#" class="show_ar_woocommerce_qr_code_img" ><?php esc_html_e( 'Try Now', 'ar-woocommerce' ) ?></a>
 			</div>
+
+			<a href="#" class="show_ar_woocommerce_qr_code_img show_ar_woocommerce_qr_code_img-<?php echo $device; ?>" ><?php esc_html_e( 'Try Now', 'ar-woocommerce' ) ?></a>
 			<?php
 		}
 	}

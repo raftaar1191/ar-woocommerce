@@ -37,3 +37,32 @@ span.ar-try-now-cancel {
 span.ar-try-now .try-now-text {
 	color: white;
 }
+
+.main-container .product-view .summary.single-product-info .show_ar_woocommerce_qr_code_img {
+	background: none;
+	margin-right: 15px;
+	border: 1px solid #eaeaea;
+	color: #333;
+	display: inline-block;
+	font-family: Lato, Arial, Helvetica, sans-serif;
+	font-size: 1em;
+	font-weight: normal;
+	height: 40px;
+	letter-spacing: 0;
+	line-height: 38px;
+	margin-bottom: 20px;
+	min-width: 150px;
+	overflow: visible;
+	position: relative;
+	text-align: center;
+	text-transform: none;
+	vertical-align: middle;
+	-webkit-transition: all .3s ease;
+	-moz-transition: all .3s ease;
+	-ms-transition: all .3s ease;
+	-o-transition: all .3s ease;
+	transition: all .3s ease;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+}

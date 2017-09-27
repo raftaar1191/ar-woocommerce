@@ -43,3 +43,19 @@ jQuery( 'div.product' ).on( 'click', 'span.ar-try-now-cancel', function ( e ) {
 
 	return false;
 } );
+
+
+
+jQuery( 'body.single-product' ).on( 'click', 'a.show_ar_woocommerce_qr_code_img-desktop', function ( e ) {
+	e.preventDefault();
+
+	var parent = jQuery( this ).closest( '.summary' );
+
+	if( parent.find( '.ar_woocommerce_qr_code_main' ).hasClass( 'hide' ) ) {
+		parent.find( '.ar_woocommerce_qr_code_main' ).removeClass( 'hide' );
+	} else {
+		parent.find( '.ar_woocommerce_qr_code_main' ).addClass( 'hide' );
+	}
+
+	return false;
+});
