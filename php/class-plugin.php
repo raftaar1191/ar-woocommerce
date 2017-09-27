@@ -59,7 +59,7 @@ class Plugin extends Plugin_Base {
 			$url = AR_IMAGE_URL . $product_id . '.png';
 			$device = ( wp_is_mobile() ? 'mobile' : 'desktop' );
 			?>
-			<span class="ar-try-now"><a href="<?php echo $url; ?>" class="try-now-text try-now-text-<?php echo $device; ?>"><?php esc_html_e( 'Try Now', 'ar-woocommerce' ) ?></a></span>
+			<span class="ar-try-now"><a href="<?php echo ( ( 'desktop' === (string) $device ) ? $url : get_post_meta( $product_id, '_ar_link', true ) ); ?>" class="try-now-text try-now-text-<?php echo $device; ?>"><?php esc_html_e( 'Try Now', 'ar-woocommerce' ) ?></a></span>
 			<span class="ar-try-now-cancel hide"><a href="#" class="try-now-cancel-text" ><?php esc_html_e( 'x', 'ar-woocommerce' ) ?></a></span>
 			<?php
 		}
@@ -96,7 +96,7 @@ class Plugin extends Plugin_Base {
 				</div>
 			</div>
 
-			<a href="#" class="show_ar_woocommerce_qr_code_img show_ar_woocommerce_qr_code_img-<?php echo $device; ?>" ><?php esc_html_e( 'Try Now', 'ar-woocommerce' ) ?></a>
+			<a href="<?php echo ( ( 'desktop' === (string) $device ) ? $url : get_post_meta( $product_id, '_ar_link', true ) ); ?>" class="show_ar_woocommerce_qr_code_img show_ar_woocommerce_qr_code_img-<?php echo $device; ?>" ><?php esc_html_e( 'Try Now', 'ar-woocommerce' ) ?></a>
 			<?php
 		}
 	}
