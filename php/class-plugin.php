@@ -36,10 +36,33 @@ class Plugin extends Plugin_Base {
 	 * Include all the action ans filters that are going to be called.
 	 */
 	function hooks() {
+		$this->add_action( 'wp_default_scripts', array( $this, 'register_scripts' ), 11 );
+		$this->add_action( 'wp_default_styles', array( $this, 'register_styles' ), 11 );
+
 		$this->add_filter( 'woocommerce_product_data_tabs', array( $this, 'woocommerce_product_data_tabs' ), 10, 1 );
 		$this->add_action( 'woocommerce_product_data_panels', array( $this, 'woocommerce_product_data_panels' ), 10, 1 );
 		$this->add_action( 'woocommerce_process_product_meta', array( $this, 'woocommerce_process_product_meta' ), 10, 1 );
 		$this->add_action( 'woocommerce_after_add_to_cart_form', array( $this, 'woocommerce_after_add_to_cart_form' ), 10 );
+		$this->add_action( 'woocommerce_after_shop_loop_item', array( $this, 'woocommerce_after_shop_loop_item' ), 10 );
+	}
+
+	/**
+	 * Add AR button to the product in the loop.
+	 */
+	function woocommerce_after_shop_loop_item() {
+		wp_enqueue_style( $this->config['ar_woocommerce_frountend_css'] );
+		wp_enqueue_script( $this->config['ar_woocommerce_frountend_js'] );
+		global $product;
+		$product_id = $product->get_id();
+		$has_qr = get_post_meta( $product_id, 'ar_woocommerce_has_qr', true );
+		if ( ! empty( $has_qr ) ) {
+			$url = AR_IMAGE_URL . $product_id . '.png';
+			$device = ( wp_is_mobile() ? 'mobile' : 'desktop' );
+			?>
+			<span class="ar-try-now"><a href="<?php echo $url; ?>" class="try-now-text try-now-text-<?php echo $device; ?>"><?php esc_html_e( 'Try Now', 'ar-woocommerce' ) ?></a></span>
+			<span class="ar-try-now-cancel hide"><a href="#" class="try-now-cancel-text" ><?php esc_html_e( 'x', 'ar-woocommerce' ) ?></a></span>
+			<?php
+		}
 	}
 
 	/**
@@ -47,7 +70,7 @@ class Plugin extends Plugin_Base {
 	 */
 	function woocommerce_product_data_tabs( $args  ) {
 		$args['ar-woocommerce-tab'] = array(
-			'label' => __( 'AR', 'my_text_domain' ),
+			'label' => __( 'AR', 'ar-woocommerce' ),
 			'target' => 'ar_woocommerce_product_data',
 		);
 		return $args;
@@ -57,11 +80,13 @@ class Plugin extends Plugin_Base {
 	 * Show QR Image in frountend.
 	 */
 	function woocommerce_after_add_to_cart_form() {
+		wp_enqueue_style( $this->config['ar_woocommerce_frountend_css'] );
+		wp_enqueue_script( $this->config['ar_woocommerce_frountend_js'] );
 		global $product;
-		$post_id = $product->get_id();
-		$has_qr = get_post_meta( $post_id, 'ar_woocommerce_has_qr', true );
+		$product_id = $product->get_id();
+		$has_qr = get_post_meta( $product_id, 'ar_woocommerce_has_qr', true );
 		if ( $has_qr ) {
-			$image_name = $post_id . '.png';
+			$image_name = $product_id . '.png';
 			$url = AR_IMAGE_URL . $image_name;
 			?>
 			<div class="ar_woocommerce_qr_code_main">
@@ -134,7 +159,9 @@ class Plugin extends Plugin_Base {
 	 *
 	 * @param \WP_Scripts $wp_scripts Instance of \WP_Scripts.
 	 */
-	public function register_scripts( \WP_Scripts $wp_scripts ) {}
+	public function register_scripts( \WP_Scripts $wp_scripts ) {
+		$wp_scripts->add( $this->config['ar_woocommerce_frountend_js'], $this->dir_url . 'assests/js/frountend.js', array( 'jquery' ), $this->config['version'] );
+	}
 
 	/**
 	 * Register styles.
@@ -143,5 +170,7 @@ class Plugin extends Plugin_Base {
 	 *
 	 * @param \WP_Styles $wp_styles Instance of \WP_Styles.
 	 */
-	public function register_styles( \WP_Styles $wp_styles ) {}
+	public function register_styles( \WP_Styles $wp_styles ) {
+		$wp_styles->add( $this->config['ar_woocommerce_frountend_css'], $this->dir_url . 'assests/css/frountend.css', array(), $this->config['version'] );
+	}
 }

@@ -19,7 +19,11 @@ abstract class Plugin_Base {
 	 *
 	 * @var array
 	 */
-	public $config = array();
+	public $config = array(
+		'ar_woocommerce_frountend_js' => 'ar-woocommerce-frountend-js',
+		'ar_woocommerce_frountend_css' => 'ar-woocommerce-frountend-css',
+		'version'     => '1.0'
+	);
 
 	/**
 	 * Plugin slug.
